@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="icons">
+    <file>icons/home-solid-gray.png</file>
+  </qresource>
+</RCC>
