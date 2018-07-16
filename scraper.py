@@ -1,13 +1,16 @@
 import requests
+import re
 from bs4 import BeautifulSoup
 from software import Software
 
 
 class Scraper():
-    def __init__(self, result):
+    def __init__(self, progress, result):
+        self.progress = progress
         self.result = result
 
     def scrape(self, year):
+        self.progress.emit(11)
         teamWikisPageSource = requests.get(
             'http://igem.org/Team_Wikis?year=' + str(year)).text
         teamWikisPageSoup = BeautifulSoup(teamWikisPageSource, 'lxml')
@@ -17,9 +20,12 @@ class Scraper():
         self.getLinkDescriptions(linksWithContent, year)
 
     def getLinks(self, teamWikisPageContent):
+        totalTeams = int(
+            re.search(r'\d+', teamWikisPageContent.find('big').get_text()).group())
         links = []
         for link in teamWikisPageContent.findAll('a'):
             links.append(link['href'] + "/Software")
+            self.progress.emit(22 / totalTeams)
         return links
 
     def getLinksWithContent(self, links):
@@ -33,6 +39,7 @@ class Scraper():
                 pass
             else:
                 linksWithContent.append(links[i])
+            self.progress.emit(33 / len(links))
         return linksWithContent
 
     def getLinkDescriptions(self, linksWithContent, year):
@@ -64,3 +71,4 @@ class Scraper():
             software = Software(linksWithContent[i].split(
                 "/")[3].split(":")[1], description, year)
             self.result.emit(software)
+            self.progress.emit(33 / len(linksWithContent))

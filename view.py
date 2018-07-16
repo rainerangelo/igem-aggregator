@@ -117,6 +117,12 @@ class View:
             QListWidget::item:selected {
 
             }
+            QProgressBar {
+                border: 20px solid rgb(255, 255, 255);
+            }
+            QProgressBar::chunk {
+
+            }
             QTextBrowser {
                 background-color: transparent;
                 border: none;
@@ -372,8 +378,12 @@ class View:
         self.scrapeResultsList.setVerticalScrollMode(
             QtWidgets.QAbstractItemView.ScrollPerPixel)
 
+        self.progressBar = QtWidgets.QProgressBar()
+        self.progressBar.setTextVisible(False)
+
         self.scrapeInfoLayout.addWidget(self.scrapeSearchWidget)
         self.scrapeInfoLayout.addWidget(self.scrapeResultsList)
+        self.scrapeInfoLayout.addWidget(self.progressBar)
 
         self.scrapeInfoLayout.addItem(QtWidgets.QSpacerItem(
             20, 0, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum))

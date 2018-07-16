@@ -13,7 +13,7 @@ class ScrapeThread(QtCore.QThread):
     def __init__(self, year):
         QtCore.QThread.__init__(self)
         self.year = year
-        self.scraper = Scraper(self.result)
+        self.scraper = Scraper(self.progress, self.result)
 
     def __del__(self):
         self.wait()
@@ -72,14 +72,22 @@ class Controller:
         self.view.scrapeResultsList.clear()
         year = int(self.view.scrapeSearchLine.text())
         self.scrapeThread = ScrapeThread(year)
+
+        self.view.progressBar.setValue(0)
+        self.scrapeThread.progress.connect(self.updateProgressBar)
+
         self.scrapeThread.result.connect(self.addToDatabase)
         self.scrapeThread.finished.connect(lambda: self.showResults(year))
         self.scrapeThread.start()
+
+    def updateProgressBar(self, val):
+        self.view.progressBar.setValue(self.view.progressBar.value() + val)
 
     def addToDatabase(self, software):
         self.model.replace(software)
 
     def showResults(self, year):
+        self.view.progressBar.setValue(100)
         softwareList = self.model.getAllFromYear(year)
         for i in softwareList:
             software = Software(i[0], i[1], str(i[2]))
