@@ -40,12 +40,14 @@ class CustomLineEdit(QtWidgets.QLineEdit):
         super(CustomLineEdit, self).focusInEvent(event)
         self.clear()
 
-    def focusOutEvent(self, event):
-        super(CustomLineEdit, self).focusInEvent(event)
-        self.setText(self.suggestion)
+    # def focusOutEvent(self, event):
+    #     super(CustomLineEdit, self).focusInEvent(event)
+    #     self.setText(self.suggestion)
 
     def setSuggestion(self, suggestion):
         self.suggestion = suggestion
+
+    def showSuggestion(self):
         self.setText(self.suggestion)
 
 
@@ -121,7 +123,7 @@ class View:
                 border: 20px solid rgb(255, 255, 255);
             }
             QProgressBar::chunk {
-
+                
             }
             QTextBrowser {
                 background-color: transparent;
@@ -361,7 +363,7 @@ class View:
         font.setPointSize(10)
         self.scrapeSearchInstr = QtWidgets.QLabel()
         self.scrapeSearchInstr.setFont(font)
-        self.scrapeSearchInstr.setText("What are you looking for?")
+        self.scrapeSearchInstr.setText("Enter a year")
 
         self.scrapeSearchLine = CustomLineEdit()
         self.scrapeSearchLine.setFont(font)
@@ -431,6 +433,12 @@ class View:
         self.infoLayout.addLayout(self.infoContentLayout)
 
     def switchTo(self, index):
+        if index == 1:
+            self.window.setFocus()
+            self.librarySearchLine.showSuggestion()
+        if index == 2:
+            self.window.setFocus()
+            self.scrapeSearchLine.showSuggestion()
         if index != self.currentPage:
             self.stackedWidget.setCurrentIndex(index)
             self.currentPage = index

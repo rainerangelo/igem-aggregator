@@ -29,6 +29,15 @@ class Model:
         self.connection.commit()
         print("Dropped table: software")
 
+    def checkYear(self, year):
+        cursor = self.connection.cursor()
+        cursor.execute(
+            "SELECT * FROM software WHERE year = :year LIMIT 1", {'year': year})
+        softwareList = cursor.fetchall()
+        if len(softwareList) == 1:
+            return True
+        return False
+
     def getAll(self):
         cursor = self.connection.cursor()
         cursor.execute("SELECT * FROM software")

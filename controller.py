@@ -2,7 +2,7 @@ from model import Model
 from view import View
 from software import Software
 from scraper import Scraper
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class ScrapeThread(QtCore.QThread):
@@ -45,7 +45,7 @@ class Controller:
         self.view.homeInfoButton.clicked.connect(lambda: self.view.switchTo(3))
 
         self.view.librarySearchLine.returnPressed.connect(self.startSearching)
-        self.view.scrapeSearchLine.returnPressed.connect(self.startScraping)
+        self.view.scrapeSearchLine.returnPressed.connect(self.prepareScrape)
 
         self.view.window.show()
 
@@ -68,9 +68,31 @@ class Controller:
                 software = Software(i[0], i[1], str(i[2]))
                 self.view.addToList(self.view.libraryResultsList, software)
 
-    def startScraping(self):
-        self.view.scrapeResultsList.clear()
+    def prepareScrape(self):
         year = int(self.view.scrapeSearchLine.text())
+
+        if self.model.checkYear(year):
+            overwriteMessage = QtWidgets.QMessageBox()
+            choice = overwriteMessage.question(
+                self.view.window, "Sara", "Software from this year can already be found in the Library. Clicking \"Yes\" will overwrite these.", overwriteMessage.Yes | overwriteMessage.No)
+
+            if choice == overwriteMessage.Yes:
+                self.startScraping(year)
+            else:
+                self.view.scrapeSearchLine.setText(str(year))
+
+        else:
+            scrapeMessage = QtWidgets.QMessageBox()
+            choice = scrapeMessage.question(
+                self.view.window, "Sara", "Sara will now search the web for software from this year. Do you want to continue?", scrapeMessage.Yes | scrapeMessage.No)
+
+            if choice == scrapeMessage.Yes:
+                self.startScraping(year)
+            else:
+                self.view.scrapeSearchLine.setText(str(year))
+
+    def startScraping(self, year):
+        self.view.scrapeResultsList.clear()
         self.scrapeThread = ScrapeThread(year)
 
         self.view.progressBar.setValue(0)
