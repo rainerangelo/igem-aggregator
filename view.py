@@ -20,16 +20,13 @@ class ClickableLabel(QtWidgets.QLabel):
     def mousePressEvent(self, event):
         self.clicked.emit()
 
-    def setImages(self, default, hover, clicked):
+    def setImages(self, default, hover):
         self.default = default
         self.hover = hover
         self.setText(self.default)
 
     def setToDefault(self):
         self.setText(self.default)
-
-    def setToClicked(self):
-        self.setText(self.clicked)
 
 
 class CustomLineEdit(QtWidgets.QLineEdit):
@@ -39,10 +36,6 @@ class CustomLineEdit(QtWidgets.QLineEdit):
     def focusInEvent(self, event):
         super(CustomLineEdit, self).focusInEvent(event)
         self.clear()
-
-    # def focusOutEvent(self, event):
-    #     super(CustomLineEdit, self).focusInEvent(event)
-    #     self.setText(self.suggestion)
 
     def setSuggestion(self, suggestion):
         self.suggestion = suggestion
@@ -113,17 +106,12 @@ class View:
                 color: rgb(70, 70, 70);
                 outline: 0;
             }
-            QListWidget::item:hover {
-                
-            }
-            QListWidget::item:selected {
-
-            }
             QProgressBar {
                 border: 20px solid rgb(255, 255, 255);
             }
-            QProgressBar::chunk {
-                
+            QTextEdit {
+                border: 1px solid rgb(209, 209, 209);
+                color: rgb(70, 70, 70);
             }
             QTextBrowser {
                 background-color: transparent;
@@ -145,11 +133,13 @@ class View:
         self.library = QtWidgets.QWidget()
         self.scrape = QtWidgets.QWidget()
         self.info = QtWidgets.QWidget()
+        self.addEdit = QtWidgets.QWidget()
 
         self.stackedWidget.addWidget(self.home)
         self.stackedWidget.addWidget(self.library)
         self.stackedWidget.addWidget(self.scrape)
         self.stackedWidget.addWidget(self.info)
+        self.stackedWidget.addWidget(self.addEdit)
 
         self.menuButtons = []
 
@@ -157,12 +147,14 @@ class View:
         self.setupLibrary()
         self.setupScrape()
         self.setupInfo()
+        self.setupAddEdit()
 
-        self.stackedWidget.setCurrentIndex(0)
         self.mainLayout.addWidget(self.stackedWidget)
 
         self.currentPage = 0
         self.pageHistory = [0]
+
+        self.stackedWidget.setCurrentIndex(0)
 
         # self.window.show()
 
@@ -187,24 +179,19 @@ class View:
 
         backButton = ClickableLabel()
         backButton.setImages("<html><body><p><img src=\"icons/arrow-left-solid-white-back.png\"></p></body></html>",
-                             "<html><body><p><img src=\"icons/arrow-left-solid-white-back-hover.png\"></p></body></html>",
-                             "<html><body><p><img src=\"icons/arrow-left-solid-white-back-clicked.png\"></p></body></html>")
+                             "<html><body><p><img src=\"icons/arrow-left-solid-white-back-hover.png\"></p></body></html>")
         homeButton = ClickableLabel()
         homeButton.setImages("<html><body><p><img src=\"icons/home-solid-white-home.png\"></p></body></html>",
-                             "<html><body><p><img src=\"icons/home-solid-white-home-hover.png\"></p></body></html>",
-                             "<html><body><p><img src=\"icons/home-solid-white-home-clicked.png\"></p></body></html>")
+                             "<html><body><p><img src=\"icons/home-solid-white-home-hover.png\"></p></body></html>")
         libraryButton = ClickableLabel()
         libraryButton.setImages("<html><body><p><img src=\"icons/book-solid-white-library.png\"></p></body></html>",
-                                "<html><body><p><img src=\"icons/book-solid-white-library-hover.png\"></p></body></html>",
-                                "<html><body><p><img src=\"icons/book-solid-white-library-clicked.png\"></p></body></html>")
+                                "<html><body><p><img src=\"icons/book-solid-white-library-hover.png\"></p></body></html>")
         scrapeButton = ClickableLabel()
         scrapeButton.setImages("<html><body><p><img src=\"icons/search-solid-white-searchweb.png\"></p></body></html>",
-                               "<html><body><p><img src=\"icons/search-solid-white-searchweb-hover.png\"></p></body></html>",
-                               "<html><body><p><img src=\"icons/search-solid-white-searchweb-clicked.png\"></p></body></html>")
+                               "<html><body><p><img src=\"icons/search-solid-white-searchweb-hover.png\"></p></body></html>")
         infoButton = ClickableLabel()
         infoButton.setImages("<html><body><p><img src=\"icons/info-solid-white-information.png\"></p></body></html>",
-                             "<html><body><p><img src=\"icons/info-solid-white-information-hover.png\"></p></body></html>",
-                             "<html><body><p><img src=\"icons/info-solid-white-information-clicked.png\"></p></body></html>")
+                             "<html><body><p><img src=\"icons/info-solid-white-information-hover.png\"></p></body></html>")
 
         buttons = [backButton, homeButton,
                    libraryButton, scrapeButton, infoButton]
@@ -259,16 +246,13 @@ class View:
 
         self.homeLibraryButton = ClickableLabel(self.home)
         self.homeLibraryButton.setImages("<html><body><p><img src=\"icons/home-library-white.png\"></p></body></html>",
-                                         "<html><body><p><img src=\"icons/home-library-hover.png\"></p></body></html>",
-                                         "<html><body><p><img src=\"icons/home-library-white.png\"></p></body></html>")
+                                         "<html><body><p><img src=\"icons/home-library-hover.png\"></p></body></html>")
         self.homeSearchButton = ClickableLabel(self.home)
         self.homeSearchButton.setImages("<html><body><p><img src=\"icons/home-searchweb-white.png\"></p></body></html>",
-                                        "<html><body><p><img src=\"icons/home-searchweb-hover.png\"></p></body></html>",
-                                        "<html><body><p><img src=\"icons/home-searchweb-white.png\"></p></body></html>")
+                                        "<html><body><p><img src=\"icons/home-searchweb-hover.png\"></p></body></html>")
         self.homeInfoButton = ClickableLabel(self.home)
         self.homeInfoButton.setImages("<html><body><p><img src=\"icons/home-information-white.png\"></p></body></html>",
-                                      "<html><body><p><img src=\"icons/home-information-hover.png\"></p></body></html>",
-                                      "<html><body><p><img src=\"icons/home-information-white.png\"></p></body></html>")
+                                      "<html><body><p><img src=\"icons/home-information-hover.png\"></p></body></html>")
 
         self.homeButtonsLayout.addWidget(self.homeLibraryButton)
         self.homeButtonsLayout.addWidget(self.homeSearchButton)
@@ -313,8 +297,7 @@ class View:
 
         self.librarySearchLine = CustomLineEdit()
         self.librarySearchLine.setFont(font)
-        self.librarySearchLine.setSuggestion(
-            "Enter a year")
+        self.librarySearchLine.setSuggestion("Enter a year")
 
         self.librarySearchLayout.addWidget(self.librarySearchInstr)
         self.librarySearchLayout.addWidget(self.librarySearchLine)
@@ -363,12 +346,11 @@ class View:
         font.setPointSize(10)
         self.scrapeSearchInstr = QtWidgets.QLabel()
         self.scrapeSearchInstr.setFont(font)
-        self.scrapeSearchInstr.setText("Enter a year")
+        self.scrapeSearchInstr.setText("What are you searching for?")
 
         self.scrapeSearchLine = CustomLineEdit()
         self.scrapeSearchLine.setFont(font)
-        self.scrapeSearchLine.setSuggestion(
-            "Enter a year")
+        self.scrapeSearchLine.setSuggestion("Enter a year")
 
         self.scrapeSearchLayout.addWidget(self.scrapeSearchInstr)
         self.scrapeSearchLayout.addWidget(self.scrapeSearchLine)
@@ -424,21 +406,158 @@ class View:
 
         self.infoInfoLayout.addWidget(self.infoDescription)
 
-        self.infoInfoLayout.addItem(QtWidgets.QSpacerItem(
-            20, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum))
+        self.infoInfoLayout.addItem(QtWidgets.QSpacerItem(20, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum))
         self.infoInfoWidget.setLayout(self.infoInfoLayout)
 
         self.infoContentLayout.addWidget(self.infoInfoWidget)
 
         self.infoLayout.addLayout(self.infoContentLayout)
 
+    def setupAddEdit(self):
+        self.addEditLayout = QtWidgets.QHBoxLayout()
+        self.addEditLayout.setSpacing(0)
+        self.addEditLayout.setContentsMargins(0, 0, 0, 0)
+        self.addEditContentLayout = QtWidgets.QVBoxLayout()
+
+        self.createMenuBar(self.addEdit, self.addEditLayout)
+
+        self.createTitleBar(self.addEdit, self.addEditLayout, self.addEditContentLayout, "<html><body><p><img src=\"icons/edit-title-white.png\"></p></body></html>")
+
+        self.addEditInfoWidget = QtWidgets.QWidget()
+        self.addEditInfoLayout = QtWidgets.QVBoxLayout()
+        self.addEditInfoLayout.setSpacing(40)
+        self.addEditInfoLayout.setContentsMargins(40, 40, 40, 40)
+
+        self.teamWidget = QtWidgets.QWidget()
+        self.teamWidget.setStyleSheet("background-color: rgb(255, 255, 255)")
+        self.teamLayout = QtWidgets.QHBoxLayout()
+        self.teamLayout.setSpacing(40)
+        self.teamLayout.setContentsMargins(40, 40, 40, 40)
+
+        self.descriptionWidget = QtWidgets.QWidget()
+        self.descriptionWidget.setStyleSheet("background-color: rgb(255, 255, 255)")
+        self.descriptionLayout = QtWidgets.QHBoxLayout()
+        self.descriptionLayout.setSpacing(40)
+        self.descriptionLayout.setContentsMargins(40, 40, 40, 40)
+
+        self.yearWidget = QtWidgets.QWidget()
+        self.yearWidget.setStyleSheet("background-color: rgb(255, 255, 255)")
+        self.yearLayout = QtWidgets.QHBoxLayout()
+        self.yearLayout.setSpacing(40)
+        self.yearLayout.setContentsMargins(40, 40, 40, 40)
+
+        font = self.font
+        font.setPointSize(10)
+
+        self.addEditTeamLabel = QtWidgets.QLabel()
+        self.addEditTeamLabel.setFont(font)
+        self.addEditTeamLabel.setText("Team:")
+        self.addEditTeam = QtWidgets.QLineEdit()
+        self.addEditTeam.setFont(font)
+
+        self.addEditDescriptionLabel = QtWidgets.QLabel()
+        self.addEditDescriptionLabel.setFont(font)
+        self.addEditDescriptionLabel.setText("Description:")
+        self.addEditDescription = QtWidgets.QTextEdit()
+        self.addEditDescription.setFont(font)
+
+        self.addEditYearLabel = QtWidgets.QLabel()
+        self.addEditYearLabel.setFont(font)
+        self.addEditYearLabel.setText("Year:")
+        self.addEditYear = QtWidgets.QLineEdit()
+        self.addEditYear.setFont(font)
+
+        self.teamLabelLayout = QtWidgets.QVBoxLayout()
+        self.teamLabelLayout.addWidget(self.addEditTeamLabel)
+        self.teamLabelLayout.addItem(QtWidgets.QSpacerItem(150, 0, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum))
+
+        self.descriptionLabelLayout = QtWidgets.QVBoxLayout()
+        self.descriptionLabelLayout.addWidget(self.addEditDescriptionLabel)
+        self.descriptionLabelLayout.addItem(QtWidgets.QSpacerItem(150, 0, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum))
+
+        self.yearLabelLayout = QtWidgets.QVBoxLayout()
+        self.yearLabelLayout.addWidget(self.addEditYearLabel)
+        self.yearLabelLayout.addItem(QtWidgets.QSpacerItem(150, 0, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Minimum))
+
+        self.teamLayout.addLayout(self.teamLabelLayout)
+        self.teamLayout.addWidget(self.addEditTeam)
+        self.teamWidget.setLayout(self.teamLayout)
+
+        self.descriptionLayout.addLayout(self.descriptionLabelLayout)
+        self.descriptionLayout.addWidget(self.addEditDescription)
+        self.descriptionWidget.setLayout(self.descriptionLayout)
+
+        self.yearLayout.addLayout(self.yearLabelLayout)
+        self.yearLayout.addWidget(self.addEditYear)
+        self.yearWidget.setLayout(self.yearLayout)
+
+        self.addEditButtonsLayout = QtWidgets.QHBoxLayout()
+        self.addEditButtonsLayout.setAlignment(QtCore.Qt.AlignHCenter)
+
+        self.editButton = ClickableLabel()
+        self.editButton.setImages("<html><body><p><img src=\"icons/edit-default.png\"></p></body></html>",
+                                  "<html><body><p><img src=\"icons/edit-hover.png\"></p></body></html>")
+        self.confirmButton = ClickableLabel()
+        self.confirmButton.setImages("<html><body><p><img src=\"icons/confirm-default.png\"></p></body></html>",
+                                     "<html><body><p><img src=\"icons/confirm-hover.png\"></p></body></html>")
+        self.cancelButton = ClickableLabel()
+        self.cancelButton.setImages("<html><body><p><img src=\"icons/cancel-default.png\"></p></body></html>",
+                                    "<html><body><p><img src=\"icons/cancel-hover.png\"></p></body></html>")
+
+        self.addEditButtonsLayout.addWidget(self.editButton)
+        self.addEditButtonsLayout.addWidget(self.confirmButton)
+        self.addEditButtonsLayout.addWidget(self.cancelButton)
+
+        self.menuButtons[4][1].setVisible(False)
+        self.menuButtons[4][2].setVisible(False)
+        self.menuButtons[4][3].setVisible(False)
+        self.menuButtons[4][4].setVisible(False)
+
+        self.disableAddEdit()
+
+        self.addEditInfoLayout.addWidget(self.teamWidget)
+        self.addEditInfoLayout.addWidget(self.descriptionWidget)
+        self.addEditInfoLayout.addWidget(self.yearWidget)
+        self.addEditInfoLayout.addLayout(self.addEditButtonsLayout)
+
+        self.addEditInfoLayout.addItem(QtWidgets.QSpacerItem(
+            20, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum))
+        self.addEditInfoWidget.setLayout(self.addEditInfoLayout)
+
+        self.addEditContentLayout.addWidget(self.addEditInfoWidget)
+
+        self.addEditLayout.addLayout(self.addEditContentLayout)
+
+    def enableAddEdit(self):
+        self.addEditDescription.setEnabled(True)
+
+        self.addEditDescription.setStyleSheet("border: 1px solid rgb(209, 209, 209)")
+
+        self.editButton.setVisible(False)
+        self.confirmButton.setVisible(True)
+        self.cancelButton.setVisible(True)
+
+    def disableAddEdit(self):
+        self.addEditTeam.setEnabled(False)
+        self.addEditDescription.setEnabled(False)
+        self.addEditYear.setEnabled(False)
+
+        self.addEditTeam.setStyleSheet("border: none")
+        self.addEditDescription.setStyleSheet("border: none")
+        self.addEditYear.setStyleSheet("border: none")
+
+        self.editButton.setVisible(True)
+        self.confirmButton.setVisible(False)
+        self.cancelButton.setVisible(False)
+
     def switchTo(self, index):
+        self.window.setFocus()
         if index == 1:
-            self.window.setFocus()
             self.librarySearchLine.showSuggestion()
         if index == 2:
-            self.window.setFocus()
             self.scrapeSearchLine.showSuggestion()
+        if index == 4:
+            self.disableAddEdit()
         if index != self.currentPage:
             self.stackedWidget.setCurrentIndex(index)
             self.currentPage = index
